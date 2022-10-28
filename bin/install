@@ -31,6 +31,7 @@ install_bats() {
       ./install.sh "$install_path"
     else
       mkdir -p "$install_path/bin"
+      rm -rf .git # dont bother copying git
       cp -r . "$install_path/bin"
     fi
 
