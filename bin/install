@@ -3,7 +3,11 @@
 set -e
 set -o pipefail
 
-export DEFAULT_DOWNLOAD_PATH="/tmp/bats"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/tools.bash"
+
+toolname=$(get_tool_name)
+
+
 
 fail() {
   echo -e "\e[31mFail:\e[m $*"
@@ -19,11 +23,16 @@ install_bats() {
 
   (
     cd "$download_path"
-    echo "* Installing Bats to $install_path"
+    echo "* Installing ${toolname} to $install_path"
     mkdir -p "$install_path"
 
-    # install script from Bats-Code repo
-    ./install.sh "$install_path"
+    if [ $toolname = "bats" ]; then
+      # install script from Bats-Code repo
+      ./install.sh "$install_path"
+    else
+      mkdir -p "$install_path/bin"
+      cp -r . "$install_path/bin"
+    fi
 
     cd "$work_dir"
     echo "* successfully installed to $install_path"

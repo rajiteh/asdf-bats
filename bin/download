@@ -3,18 +3,10 @@
 set -e
 set -o pipefail
 
-export LATEST_BATS_VERSION="v1.2.0"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/tools.bash"
 
-__dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-toolname="$(basename "$(dirname "${__dirname}")")"
-readonly __dirname
-readonly toolname
-
-declare -A toolnames
-toolnames["bats"]="bats-core/bats-core"
-toolnames["bats-assert"]="ztombol/bats-assert"
-toolnames["bats-support"]="ztombol/bats-support"
-toolnames["bats-mock"]="rajiteh/bats-mock"
+toolname=$(get_tool_name)
+repo_url="https://github.com/$(get_repo_for_tool $toolname).git"
 
 fail() {
   echo -e "\e[31mFail:\e[m $*"
@@ -48,11 +40,6 @@ if [[ -z "$download_path" ]] ; then
   fail "Download path is missing - specify 2nd param or set \$ASDF_DOWNLOAD_PATH"
 fi
 
-repo_url=${3:-"$DEFAULT_BATS_REPO"}
-if [[ -z "$repo_url" ]] ; then
-  fail "repo_url is missing - specify 3rd param"
-fi
-repo_url="https://github.com/${toolnames[$toolname]}.git"
 
 
 echo "Preparing downloading $version from $repo_url"

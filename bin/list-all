@@ -5,17 +5,10 @@ set -o pipefail
 
 GITHUB_API_HOST=${GITHUB_API_HOST:-"https://api.github.com"}
 
-declare -A toolnames
-toolnames["bats"]="bats-core/bats-core"
-toolnames["bats-assert"]="ztombol/bats-assert"
-toolnames["bats-support"]="ztombol/bats-support"
-toolnames["bats-mock"]="rajiteh/bats-mock"
+source "$(dirname "${BASH_SOURCE[0]}")/../lib/tools.bash"
 
-function releases_api_url() {
-  local tool="${1}"
-  echo "$GITHUB_API_HOST/repos/${toolnames[$tool]}/tags"
-}
-
+toolname=$(get_tool_name)
+repo_url="$GITHUB_API_HOST/repos/$(get_repo_for_tool ${toolname})/tags"
 
 function sort_versions() {
   sed 'h; s/[+-]/./g; s/.p\([[:digit:]]\)/.z\1/; s/$/.z/; G; s/\n/ /' | \
@@ -56,6 +49,6 @@ function join() {
 
 # We're purposefully sorting each list individually instead of the global list because one of the version
 # the old list is returning is "alpha" and we want that version to appear before the newer versions
-all_tags=$(fetch_versions "$releases_api_url" | join)
+all_tags=$(fetch_versions "$repo_url" | join)
 
 echo "${all_tags[@]}"
