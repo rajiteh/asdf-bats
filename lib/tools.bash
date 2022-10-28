@@ -11,8 +11,7 @@ __dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 toolname="$(basename "$(dirname "${__dirname}")")"
 
 get_tool_name() {
-    # echo "${toolname}"
-    echo "bats-mock"
+    echo "${toolname}"
 }
 
 get_repo_for_tool() {
