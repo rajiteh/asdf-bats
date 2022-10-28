@@ -4,7 +4,18 @@ set -e
 set -o pipefail
 
 GITHUB_API_HOST=${GITHUB_API_HOST:-"https://api.github.com"}
-releases_api_url="$GITHUB_API_HOST/repos/bats-core/bats-core/tags"
+
+declare -A toolnames
+toolnames["bats"]="bats-core/bats-core"
+toolnames["bats-assert"]="ztombol/bats-assert"
+toolnames["bats-support"]="ztombol/bats-support"
+toolnames["bats-mock"]="rajiteh/bats-mock"
+
+function releases_api_url() {
+  local tool="${1}"
+  echo "$GITHUB_API_HOST/repos/${toolnames[$tool]}/tags"
+}
+
 
 function sort_versions() {
   sed 'h; s/[+-]/./g; s/.p\([[:digit:]]\)/.z\1/; s/$/.z/; G; s/\n/ /' | \
